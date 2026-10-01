@@ -2,14 +2,19 @@ package com.gitech.bank.controller;
 
 import com.gitech.bank.dto.AccountDTO;
 import com.gitech.bank.dto.ClientDTO;
+import com.gitech.bank.dto.PageResponse;
+import com.gitech.bank.entity.Client;
 import com.gitech.bank.service.BankService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,7 +28,7 @@ public class BankController {
     }
 
     @GetMapping("/clients")
-    public ResponseEntity<Page<ClientDTO>> getClients(
+    public ResponseEntity<PageResponse<ClientDTO>> getClients(
             @RequestParam(required = false) String search,
             Pageable pageable) {
         return ResponseEntity.ok(bankService.getClients(search, pageable));
@@ -58,5 +63,20 @@ public class BankController {
     @GetMapping("/clients/{clientId}/accounts")
     public ResponseEntity<List<AccountDTO>> getClientAccounts(@PathVariable Long clientId) {
         return ResponseEntity.ok(bankService.getAccountsByClientId(clientId));
+    }
+
+    @PostMapping(value = "/{id}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadPhoto(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            Client updatedClient = bankService.uploadClientPhoto(id, file);
+            return ResponseEntity.ok(updatedClient);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
+        }
     }
 }

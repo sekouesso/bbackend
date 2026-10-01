@@ -25,6 +25,7 @@ public class Client {
     private String nom;
     private String email;
     private String telephone;
+    private String photoUrl;
 
     @Enumerated(EnumType.STRING)
     private StatutClient statut;

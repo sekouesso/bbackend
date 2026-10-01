@@ -23,6 +23,9 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private TypeCompte type;
 
+    @Column(name = "client_location_pdf_url")
+    private String clientLocationPdfUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
