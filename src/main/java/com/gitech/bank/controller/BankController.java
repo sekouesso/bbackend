@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api") //http://localhost:8080/api
 public class BankController {
 
     private final BankService bankService;
